@@ -104,9 +104,11 @@ class Runner(object):
         ##########################
         # --- your code here --- #
         ##########################
-        for idx in range(X):
+        total_words = 0
+        for idx in range(len(X)):
             mean_loss += self.compute_loss(X[idx], D[idx])
-        mean_loss = mean_loss / X.size
+            total_words += len(X[idx])
+        mean_loss = mean_loss / total_words
 
         return mean_loss
 
