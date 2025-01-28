@@ -91,10 +91,23 @@ class RNN(Model):
         '''
 
         for t in reversed(range(len(x))):
-            pass
             ##########################
             # --- your code here --- #
             ##########################
+            ##########################
+            d_t = make_onehot(d[t], self.out_vocab_size)
+            x_t = make_onehot(x[t], self.vocab_size)
+            derivative_f_t = s[t] * (np.ones(len(s[t])) - s[t])
+            # derivative_g_t = np.ones(self.out_vocab_size)
+            delta_out_t =  (d_t - y[t])    #== (d_t - y[t]) * derivative_g_t
+            delta_in_t = np.dot(self.W.T, delta_out_t) * derivative_f_t
+
+            #update W, V, U
+            self.deltaW += np.outer(delta_out_t, s[t])
+            self.deltaV += np.outer(delta_in_t, x_t)
+            self.deltaU += np.outer(delta_in_t, s[t-1])
+
+
 
     def acc_deltas_np(self, x, d, y, s):
         '''
