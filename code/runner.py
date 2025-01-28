@@ -104,6 +104,9 @@ class Runner(object):
         ##########################
         # --- your code here --- #
         ##########################
+        for idx in range(X):
+            mean_loss += self.compute_loss(X[idx], D[idx])
+        mean_loss = mean_loss / X.size
 
         return mean_loss
 
