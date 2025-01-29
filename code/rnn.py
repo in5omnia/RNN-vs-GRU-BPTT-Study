@@ -149,9 +149,37 @@ class RNN(Model):
         
         no return values
         '''
-
         for t in reversed(range(len(x))):
-            pass
+            d_t = make_onehot(d[t], self.out_vocab_size)
+            derivative_f_t = s[t] * (np.ones(len(s[t])) - s[t])
+            delta_out_t = (d_t - y[t])
+            # No need to compute derivative_g_t since it is always 1:
+            # derivative_g_t = np.ones(self.out_vocab_size)
+            # => delta_out_t == delta_out_t * derivative_g_t
+
+            # Update W once for timestep t
+            self.deltaW += np.outer(delta_out_t, s[t])
+
+            # Compute delta_in for timestep t
+            delta_in = np.dot(self.W.T, delta_out_t) * derivative_f_t
+
+            ##self.deltaV += np.outer(delta_in, x_t_tau) #(if loop starts from 1)
+            ##self.deltaU += np.outer(delta_in, s[t_tau - 1]) #(if loop starts from 1)
+
+            # Backpropagate through time from timestep t-1 to t-'steps'
+            for tau in range(0, steps + 1):
+                t_tau = t - tau
+                if t_tau < 0:
+                    break
+                x_t_tau = make_onehot(x[t_tau], self.vocab_size)
+                self.deltaV += np.outer(delta_in, x_t_tau)  ##this should be at the end of the loop (if loop starts from 1)
+                self.deltaU += np.outer(delta_in, s[t_tau - 1]) ##this should be at the end of the loop (if loop starts from 1)
+                if tau == steps:
+                    # no need to calculate delta_in for t-steps-1
+                    break
+                # Compute new delta_in
+                derivative_f_t_tau = s[t_tau] * (np.ones(len(s[t_tau])) - s[t_tau])
+                delta_in = self.U.T * delta_in * derivative_f_t_tau
             ##########################
             # --- your code here --- #
             ##########################
