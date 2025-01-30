@@ -448,11 +448,15 @@ if __name__ == "__main__":
         runner = Runner(rnn)
         run_loss = runner.train(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0, back_steps=lookback, batch_size=100,
                      min_change=0.0001, log=True)
+
         with open("rnn_matrices.txt", "w") as f:
-            for key in rnn.__dict__:
-                if key in ['U', 'V', 'W']:
-                    f.write(key + "\n")
-                    f.write(str(rnn.__dict__[key]) + "\n")
+            f.write("U" + "\n")
+            f.write(str(rnn.U) + "\n")
+            f.write("V" + "\n")
+            f.write(str(rnn.V) + "\n")
+            f.write("W" + "\n")
+            f.write(str(rnn.W) + "\n")
+
         #run_loss = -1
         adjusted_loss = -1
 
