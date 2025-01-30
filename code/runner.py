@@ -407,9 +407,9 @@ if __name__ == "__main__":
         dev_size = 1000
         vocab_size = 2000
 
-        hdim = int(sys.argv[3])
-        lookback = int(sys.argv[4])
-        lr = float(sys.argv[5])
+        hdim = int(sys.argv[3]) #no of hidden dimensions
+        lookback = int(sys.argv[4]) #no of timesteps to look back
+        lr = float(sys.argv[5]) #learning rate
 
         # get the data set vocabulary
         vocab = pd.read_table(data_folder + "/vocab.wiki.txt", header=None, sep="\s+", index_col=0,
@@ -444,8 +444,16 @@ if __name__ == "__main__":
         ##########################
         # --- your code here --- #
         ##########################
-
-        run_loss = -1
+        rnn = RNN(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=vocab_size)
+        runner = Runner(rnn)
+        run_loss = runner.train(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0, back_steps=lookback, batch_size=100,
+                     min_change=0.0001, log=True)
+        with open("rnn_matrices.txt", "w") as f:
+            for key in rnn.__dict__:
+                if key in ['U', 'V', 'W']:
+                    f.write(key + "\n")
+                    f.write(str(rnn.__dict__[key]) + "\n")
+        #run_loss = -1
         adjusted_loss = -1
 
         print("Unadjusted: %.03f" % np.exp(run_loss))
