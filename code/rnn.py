@@ -179,7 +179,7 @@ class RNN(Model):
                     break
                 # Compute new delta_in
                 derivative_f_t_tau = s[t_tau] * (np.ones(len(s[t_tau])) - s[t_tau])
-                delta_in = self.U.T * delta_in * derivative_f_t_tau
+                delta_in = np.dot(self.U.T, delta_in) * derivative_f_t_tau
             ##########################
             # --- your code here --- #
             ##########################
