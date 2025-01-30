@@ -11,7 +11,7 @@ def invert_dict(d):
 def load_lm_dataset(fname):
     sents = []
     cnt = 0
-    with open(fname) as f:
+    with open(fname, encoding="utf-8") as f:
         for line in f:
             if cnt == 0:
                 cnt += 1
