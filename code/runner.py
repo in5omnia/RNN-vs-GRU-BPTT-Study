@@ -455,7 +455,7 @@ if __name__ == "__main__":
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
 
         # Save model matrices in a compressed binary file
-        np.savez("rnn_matrices_"+perm_count+".npz", U=rnn.U, V=rnn.V, W=rnn.W)
+        np.savez("rnn_matrices_1.npz", U=rnn.U, V=rnn.V, W=rnn.W)
         print("RNN matrices saved successfully!")
 
         #run_loss = -1
