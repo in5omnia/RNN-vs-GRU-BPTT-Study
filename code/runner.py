@@ -448,16 +448,15 @@ if __name__ == "__main__":
         runner = Runner(rnn)
         run_loss = runner.train(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0, back_steps=lookback, batch_size=100,
                      min_change=0.0001, log=True)
+        perm_count = 1
 
         with open("rnn_matrices.txt", "a") as f:
-            f.write(f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+            f.write(f'perm_count = {perm_count}, Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
-            f.write("U" + "\n")
-            f.write(str(rnn.U) + "\n")
-            f.write("V" + "\n")
-            f.write(str(rnn.V) + "\n")
-            f.write("W" + "\n")
-            f.write(str(rnn.W) + "\n")
+
+        # Save model matrices in a compressed binary file
+        np.savez("rnn_matrices_"+perm_count+".npz", U=rnn.U, V=rnn.V, W=rnn.W)
+        print("RNN matrices saved successfully!")
 
         #run_loss = -1
         adjusted_loss = -1
