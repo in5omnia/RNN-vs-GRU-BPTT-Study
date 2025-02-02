@@ -48,7 +48,7 @@ class Runner(object):
         y, s = self.model.predict(x)
         for t in range(len(x)):
             d_t = make_onehot(d[t], self.model.vocab_size)
-            loss += - np.dot(d_t, np.log(y[t]))
+            loss += - (d_t @ np.log(y[t]))
 
         return loss
 

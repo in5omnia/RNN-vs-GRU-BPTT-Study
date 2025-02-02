@@ -66,9 +66,9 @@ class RNN(Model):
             # --- your code here --- #
             ##########################
             x_t = make_onehot(x[t], self.vocab_size)
-            net_in_t = np.dot(self.V, x_t) + np.dot(self.U, s[t-1]) # s[0] must always be [0, 0, ... , 0]
+            net_in_t = self.V @ x_t + self.U @ s[t-1] # s[0] must always be [0, 0, ... , 0]
             s[t] = sigmoid(net_in_t)
-            net_out_t = np.dot(self.W, s[t])
+            net_out_t = self.W @ s[t]
             y[t] = softmax(net_out_t)
 
         return y, s
@@ -100,7 +100,7 @@ class RNN(Model):
             derivative_f_t = s[t] * (np.ones(len(s[t])) - s[t])
             # derivative_g_t = np.ones(self.out_vocab_size)
             delta_out_t =  (d_t - y[t])    #== (d_t - y[t]) * derivative_g_t
-            delta_in_t = np.dot(self.W.T, delta_out_t) * derivative_f_t
+            delta_in_t = (self.W.T @ delta_out_t) * derivative_f_t
 
             #update W, V, U
             self.deltaW += np.outer(delta_out_t, s[t])
@@ -161,7 +161,7 @@ class RNN(Model):
             self.deltaW += np.outer(delta_out_t, s[t])
 
             # Compute delta_in for timestep t
-            delta_in = np.dot(self.W.T, delta_out_t) * derivative_f_t
+            delta_in = (self.W.T @ delta_out_t) * derivative_f_t
 
             ##self.deltaV += np.outer(delta_in, x_t_tau) #(if loop starts from 1)
             ##self.deltaU += np.outer(delta_in, s[t_tau - 1]) #(if loop starts from 1)
@@ -178,8 +178,8 @@ class RNN(Model):
                     # no need to calculate delta_in for t-steps-1
                     break
                 # Compute new delta_in
-                derivative_f_t_tau = s[t_tau] * (np.ones(len(s[t_tau])) - s[t_tau])
-                delta_in = np.dot(self.U.T, delta_in) * derivative_f_t_tau
+                derivative_f_t_tau = s[t_tau-1] * (np.ones(len(s[t_tau-1])) - s[t_tau-1])
+                delta_in = (self.U.T @ delta_in) * derivative_f_t_tau
             ##########################
             # --- your code here --- #
             ##########################
