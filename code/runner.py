@@ -69,6 +69,8 @@ class Runner(object):
         ##########################
         # --- your code here --- #
         ##########################
+        y, s = self.model.predict(x)
+        loss = - (np.log(y[-1][d[0]]))
 
         return loss
 
@@ -86,8 +88,9 @@ class Runner(object):
         ##########################
         # --- your code here --- #
         ##########################
-
-        return 0
+        y, s = self.model.predict(x)
+        print(y[-1])
+        return np.argmax(y[-1]) == d[0]
 
     def compute_mean_loss(self, X, D):
         '''
@@ -508,8 +511,22 @@ if __name__ == "__main__":
         ##########################
         # --- your code here --- #
         ##########################
+        rnn = RNN(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=2)
+        runner = Runner(rnn)
+        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0,
+                                back_steps=lookback, batch_size=100,
+                                min_change=0.0001, log=True)
 
-        acc = 0.
+        with open("rnn_matrices_np.txt", "a") as f:
+            f.write(
+                f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+            f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
+
+        # Save model matrices in a compressed binary file
+        np.savez("rnn_np_matrices.npz", U=rnn.U, V=rnn.V, W=rnn.W)
+        print("RNN matrices saved successfully!")
+
+        acc = sum([runner.compute_acc_np(X_dev[i], D_dev[i]) for i in range(len(X_dev))]) / len(X_dev)
 
         print("Accuracy: %.03f" % acc)
 
@@ -557,7 +574,21 @@ if __name__ == "__main__":
         ##########################
         # --- your code here --- #
         ##########################
+        gru = GRU(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=2)
+        runner = Runner(gru)
+        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0,
+                                   back_steps=lookback, batch_size=100,
+                                   min_change=0.0001, log=True)
 
-        acc = 0.
+        with open("rnn_matrices_np.txt", "a") as f:
+            f.write(
+                f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+            f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
+
+        # Save model matrices in a compressed binary file
+        np.savez("rnn_np_matrices.npz", Ur=gru.Ur, Uz=gru.Uz, Uh=gru.Uh, Vr=gru.Vr, Vz=gru.Vz, Vh=gru.Vh, W=gru.W)
+        print("RNN matrices saved successfully!")
+
+        acc = sum([runner.compute_acc_np(X_dev[i], D_dev[i]) for i in range(len(X_dev))]) / len(X_dev)
 
         print("Accuracy: %.03f" % acc)

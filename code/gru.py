@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from rnnmath import *
 from gru_abstract import GRUAbstract
 
@@ -53,6 +52,13 @@ class GRU(GRUAbstract):
         ##########################
         # --- your code here --- #
         ##########################
+        x_t = make_onehot(x, self.vocab_size)
+        r = sigmoid(self.Vr @ x_t + self.Ur @ s_previous)
+        z = sigmoid(self.Vz @ x_t + self.Uz @ s_previous)
+        h = np.tanh(self.Vh @ x_t + self.Uh @ (r * s_previous))
+        s = z * s_previous + (1 - z) * h
+        net_out = self.W @ s
+        y = softmax(net_out)
 
         return y, s, h, z, r
 
@@ -66,7 +72,7 @@ class GRU(GRUAbstract):
         repsect to the output) and pass it to self.backward() method of GRUAbstract
 
         x	list of words, as indices, e.g.: [0, 4, 2]
-        d	array with one element, as indices, e.g.: [0] or [1]
+
         y	predicted output layer for x; list of probability vectors, e.g., [[0.3, 0.1, 0.1, 0.5], [0.2, 0.7, 0.05, 0.05] [...]]
             should be part of the return value of predict(x)
         s	predicted hidden layer for x; list of vectors, e.g., [[1.2, -2.3, 5.3, 1.0], [-2.1, -1.1, 0.2, 4.2], [...]]
@@ -78,6 +84,9 @@ class GRU(GRUAbstract):
         ##########################
         # --- your code here --- #
         ##########################
+        t = len(x) - 1
+        d_t = make_onehot(d[0], self.out_vocab_size)
+        delta_output = d_t - y[t]
         self.backward(x, t, s, delta_output)
 
     def acc_deltas_bptt_np(self, x, d, y, s, steps):
@@ -102,5 +111,8 @@ class GRU(GRUAbstract):
         ##########################
         # --- your code here --- #
         ##########################
-
+        #for t in reversed(range(len(x))):
+        t = len(x) -1
+        d_t = make_onehot(d[0], self.out_vocab_size)
+        delta_output = d_t - y[t]
         self.backward(x, t, s, delta_output, steps)

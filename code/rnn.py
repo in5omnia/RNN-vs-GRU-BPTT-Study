@@ -126,7 +126,19 @@ class RNN(Model):
         
         no return values
         '''
-        pass
+
+
+        x_t = make_onehot(x[-1], self.vocab_size)
+        d_t = make_onehot(d[0], self.out_vocab_size)
+        derivative_f_t = s[-2] * (np.ones(len(s[-2])) - s[-2])
+        # derivative_g_t = np.ones(self.out_vocab_size)
+        delta_out_t =  (d_t - y[-1])  # == (d - [np.argmax(y[-1])]) * derivative_g_t
+        delta_in_t = (self.W.T @ delta_out_t) * derivative_f_t
+
+        # update W, V, U
+        self.deltaW += np.outer(delta_out_t, s[-2])
+        self.deltaV += np.outer(delta_in_t, x_t)
+        self.deltaU += np.outer(delta_in_t, s[-3])
 
         ##########################
         # --- your code here --- #
@@ -203,7 +215,37 @@ class RNN(Model):
         
         no return values
         '''
-        pass
+        d_t = make_onehot(d[0], self.out_vocab_size)
+        derivative_f_t = s[-2] * (np.ones(len(s[-2])) - s[-2])
+        delta_out_t = (d_t - y[-1])
+        # No need to compute derivative_g_t since it is always 1:
+        # derivative_g_t = np.ones(self.out_vocab_size)
+        # => delta_out_t == delta_out_t * derivative_g_t
+
+        # Update W once for timestep t
+        self.deltaW += np.outer(delta_out_t, s[-2])
+
+        # Compute delta_in for timestep t
+        delta_in = (self.W.T @ delta_out_t) * derivative_f_t
+
+        ##self.deltaV += np.outer(delta_in, x_t_tau) #(if loop starts from 1)
+        ##self.deltaU += np.outer(delta_in, s[t_tau - 1]) #(if loop starts from 1)
+
+        # Backpropagate through time from timestep t-1 to t-'steps'
+        t = len(x) - 1
+        for tau in range(0, steps + 1):
+            t_tau = t - tau
+            if t_tau < 0:
+                break
+            x_t_tau = make_onehot(x[t_tau], self.vocab_size)
+            self.deltaV += np.outer(delta_in, x_t_tau)  ##this should be at the end of the loop (if loop starts from 1)
+            self.deltaU += np.outer(delta_in, s[t_tau - 1]) ##this should be at the end of the loop (if loop starts from 1)
+            if tau == steps:
+                # no need to calculate delta_in for t-steps-1
+                break
+            # Compute new delta_in
+            derivative_f_t_tau = s[t_tau-1] * (np.ones(len(s[t_tau-1])) - s[t_tau-1])
+            delta_in = (self.U.T @ delta_in) * derivative_f_t_tau
 
         ##########################
         # --- your code here --- #
