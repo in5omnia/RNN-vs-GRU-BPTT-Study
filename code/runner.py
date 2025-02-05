@@ -453,7 +453,7 @@ if __name__ == "__main__":
         perm_count = 1
 
         with open("rnn_matrices.txt", "a") as f:
-            f.write(f'perm_count = {perm_count}, Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+            f.write(f'perm_count = {perm_count}, Learning Rate= {lr}, Anneal= 5, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
 
         # Save model matrices in a compressed binary file
@@ -518,7 +518,7 @@ if __name__ == "__main__":
 
         with open("rnn_matrices_np.txt", "a") as f:
             f.write(
-                f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+                f'Learning Rate= {lr}, Anneal= 5, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
 
         # Save model matrices in a compressed binary file
@@ -581,7 +581,7 @@ if __name__ == "__main__":
 
         with open("gru_matrices_np.txt", "a") as f:
             f.write(
-                f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
+                f'Learning Rate= {lr}, Anneal= 5, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
 
         # Save model matrices in a compressed binary file
