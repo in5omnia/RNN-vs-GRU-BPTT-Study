@@ -127,18 +127,18 @@ class RNN(Model):
         no return values
         '''
 
-
-        x_t = make_onehot(x[-1], self.vocab_size)
+        last_x_idx = len(x) - 1
+        x_t = make_onehot(x[last_x_idx], self.vocab_size)
         d_t = make_onehot(d[0], self.out_vocab_size)
-        derivative_f_t = s[-2] * (np.ones(len(s[-2])) - s[-2])
+        derivative_f_t = s[last_x_idx] * (np.ones(len(s[last_x_idx])) - s[last_x_idx])
         # derivative_g_t = np.ones(self.out_vocab_size)
-        delta_out_t =  (d_t - y[-1])  # == (d - [np.argmax(y[-1])]) * derivative_g_t
+        delta_out_t =  (d_t - y[last_x_idx])  # == (d - [np.argmax(y[-1])]) * derivative_g_t
         delta_in_t = (self.W.T @ delta_out_t) * derivative_f_t
 
         # update W, V, U
-        self.deltaW += np.outer(delta_out_t, s[-2])
+        self.deltaW += np.outer(delta_out_t, s[last_x_idx])
         self.deltaV += np.outer(delta_in_t, x_t)
-        self.deltaU += np.outer(delta_in_t, s[-3])
+        self.deltaU += np.outer(delta_in_t, s[last_x_idx - 1])
 
         ##########################
         # --- your code here --- #

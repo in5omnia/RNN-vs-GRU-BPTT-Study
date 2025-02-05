@@ -89,7 +89,6 @@ class Runner(object):
         # --- your code here --- #
         ##########################
         y, s = self.model.predict(x)
-        print(y[-1])
         return np.argmax(y[-1]) == d[0]
 
     def compute_mean_loss(self, X, D):
@@ -472,7 +471,7 @@ if __name__ == "__main__":
         starter code for parameter estimation.
         change this to different values, or use it to get you started with your own testing class
         '''
-        train_size = 10000
+        train_size = 2000
         dev_size = 1000
         vocab_size = 2000
 
@@ -535,7 +534,7 @@ if __name__ == "__main__":
         starter code for parameter estimation.
         change this to different values, or use it to get you started with your own testing class
         '''
-        train_size = 10000
+        train_size = 2000
         dev_size = 1000
         vocab_size = 2000
 
@@ -580,13 +579,13 @@ if __name__ == "__main__":
                                    back_steps=lookback, batch_size=100,
                                    min_change=0.0001, log=True)
 
-        with open("rnn_matrices_np.txt", "a") as f:
+        with open("gru_matrices_np.txt", "a") as f:
             f.write(
                 f'Learning Rate= {lr}, Anneal= 0, back_steps= {lookback}, hidden layers= {hdim}, batch_size= 100 \n')
             f.write(f"Unadjusted: {np.exp(run_loss):.03f}\n\n")
 
         # Save model matrices in a compressed binary file
-        np.savez("rnn_np_matrices.npz", Ur=gru.Ur, Uz=gru.Uz, Uh=gru.Uh, Vr=gru.Vr, Vz=gru.Vz, Vh=gru.Vh, W=gru.W)
+        np.savez("gru_np_matrices.npz", Ur=gru.Ur, Uz=gru.Uz, Uh=gru.Uh, Vr=gru.Vr, Vz=gru.Vz, Vh=gru.Vh, W=gru.W)
         print("RNN matrices saved successfully!")
 
         acc = sum([runner.compute_acc_np(X_dev[i], D_dev[i]) for i in range(len(X_dev))]) / len(X_dev)
