@@ -448,7 +448,7 @@ if __name__ == "__main__":
         ##########################
         rnn = RNN(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=vocab_size)
         runner = Runner(rnn)
-        run_loss = runner.train(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0, back_steps=lookback, batch_size=100,
+        run_loss = runner.train(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=5, back_steps=lookback, batch_size=100,
                      min_change=0.0001, log=True)
         perm_count = 1
 
@@ -512,7 +512,7 @@ if __name__ == "__main__":
         ##########################
         rnn = RNN(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=2)
         runner = Runner(rnn)
-        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0,
+        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=5,
                                 back_steps=lookback, batch_size=100,
                                 min_change=0.0001, log=True)
 
@@ -575,7 +575,7 @@ if __name__ == "__main__":
         ##########################
         gru = GRU(vocab_size=vocab_size, hidden_dims=hdim, out_vocab_size=2)
         runner = Runner(gru)
-        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=0,
+        run_loss = runner.train_np(X_train, D_train, X_dev, D_dev, epochs=10, learning_rate=lr, anneal=5,
                                    back_steps=lookback, batch_size=100,
                                    min_change=0.0001, log=True)
 
